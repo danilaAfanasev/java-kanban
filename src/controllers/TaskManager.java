@@ -1,6 +1,8 @@
-import java.awt.image.AreaAveragingScaleFilter;
+package controllers;
+
 import java.util.HashMap;
 import java.util.*;
+import model.*;
 
 public class TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();
