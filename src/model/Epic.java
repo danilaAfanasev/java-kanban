@@ -17,7 +17,7 @@ public class Epic extends Task {
         subtasksList.add(subtask);
     }
 
-    public void clearSubstaks(){
+    public void clearSubtasks(){
         subtasksList.clear();
     }
 
