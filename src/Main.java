@@ -1,38 +1,85 @@
-import controllers.TaskManager;
-import model.Epic;
+import controllers.InMemoryTaskManager;
+import controllers.Managers;
 import model.Status;
-import model.Subtask;
 import model.Task;
+import model.Epic;
+import model.Subtask;
 
 public class Main {
 
-    public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+    private static final InMemoryTaskManager inMemoryTaskManager = Managers.getDefault();
 
+    public static void main(String[] args) {
+        addTasks();
+        printAllTasks();
+        printViewHistory();
+    }
+
+    private static void addTasks() {
         Task wipeDust = new Task("Протереть пыль", "С новой, чистой тряпкой");
-        Task wipeDustCreated = taskManager.addTask(wipeDust);
-        System.out.println(wipeDustCreated);
+        inMemoryTaskManager.addTask(wipeDust);
 
         Task wipeDustUpdate = new Task(wipeDust.getId(), "Не забыть протереть пыль",
                 "Можно использовать старую тряпку, но лучше новую", Status.IN_PROGRESS);
-        Task wipeDustUpdated = taskManager.updateTask(wipeDustUpdate);
-        System.out.println(wipeDustUpdated);
+        inMemoryTaskManager.updateTask(wipeDustUpdate);
+        inMemoryTaskManager.addTask(new Task("Прибраться в детской", "Помыть пол и прибрать игрушки"));
+
 
         Epic changeWallpaper = new Epic("Поменять обои", "Нужно успеть до Нового года");
-        taskManager.addEpic(changeWallpaper);
-        System.out.println(changeWallpaper);
-
+        inMemoryTaskManager.addEpic(changeWallpaper);
         Subtask changeWallpaperSubtaskFirst = new Subtask("Выбрать новые обои", "Минималистичные",
                 changeWallpaper.getId());
         Subtask changeWallpaperSubtaskSecond = new Subtask("Поклеить новые обои", "Старые - выкинуть",
                 changeWallpaper.getId());
-        taskManager.addSubtask(changeWallpaperSubtaskFirst);
-        taskManager.addSubtask(changeWallpaperSubtaskSecond);
-        System.out.println(changeWallpaper);
+        Subtask changeWallpaperSubtaskThird = new Subtask("Убедиться, что они подходят интерьеру", "Обои подходят мебели",
+                changeWallpaper.getId());
 
-        changeWallpaperSubtaskFirst.setStatus(Status.DONE);
-        taskManager.updateSubtask(changeWallpaperSubtaskFirst);
-        System.out.println(changeWallpaper);
+        inMemoryTaskManager.addSubtask(changeWallpaperSubtaskFirst);
+        inMemoryTaskManager.addSubtask(changeWallpaperSubtaskSecond);
+        inMemoryTaskManager.addSubtask(changeWallpaperSubtaskThird);
 
+        changeWallpaperSubtaskThird.setStatus(Status.DONE);
+        inMemoryTaskManager.updateSubtask(changeWallpaperSubtaskThird);
+    }
+
+    private static void printAllTasks() {
+        System.out.println("Задачи:");
+        for (Task task : Main.inMemoryTaskManager.getTasks()) {
+            System.out.println(task);
+        }
+
+        System.out.println("Эпики:");
+        for (Epic epic : Main.inMemoryTaskManager.getEpics()) {
+            System.out.println(epic);
+
+            for (Task task : Main.inMemoryTaskManager.getEpicSubtasks(epic)) {
+                System.out.println("--> " + task);
+            }
+        }
+
+        System.out.println("Подзадачи:");
+        for (Task subtask : Main.inMemoryTaskManager.getSubtasks()) {
+            System.out.println(subtask);
+        }
+    }
+
+    private static void printViewHistory() {
+        Main.inMemoryTaskManager.getTaskByID(1);
+        Main.inMemoryTaskManager.getTaskByID(2);
+        Main.inMemoryTaskManager.getEpicByID(3);
+        Main.inMemoryTaskManager.getTaskByID(1);
+        Main.inMemoryTaskManager.getSubtaskByID(4);
+        Main.inMemoryTaskManager.getSubtaskByID(5);
+        Main.inMemoryTaskManager.getSubtaskByID(6);
+        Main.inMemoryTaskManager.getEpicByID(3);
+        Main.inMemoryTaskManager.getSubtaskByID(4);
+        Main.inMemoryTaskManager.getTaskByID(2);
+        Main.inMemoryTaskManager.getSubtaskByID(6);
+        System.out.println();
+
+        System.out.println("История просмотров:");
+        for (Task task : Main.inMemoryTaskManager.getHistory()) {
+            System.out.println(task);
+        }
     }
 }
