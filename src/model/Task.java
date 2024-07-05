@@ -21,12 +21,6 @@ public class Task {
         this.status = Status.NEW;
     }
 
-    public Task(int id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
-
     public int getId(){
         return id;
     }
@@ -68,8 +62,7 @@ public class Task {
             return false;
         }
         Task task = (Task) object;
-        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description)
-                && status == task.status;
+        return id == task.id;
 
     }
 
